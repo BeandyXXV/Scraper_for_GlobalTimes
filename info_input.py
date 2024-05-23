@@ -169,8 +169,7 @@ class Ui_MainWindow(object):
 
         scraping = ScrapingTool(self.input_record)
         scraping.setting_info()
-
-
+        scraping.start_scraping(21)
 
     def update_combobox2(self, index):
         # obtain the first combobox info
@@ -194,6 +193,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
