@@ -9,12 +9,35 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QDate
+
+from scraping_gt import ScrapingTool
 
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.section_options = {
+            'Please Select': ['Please Select'],
+            'CHINA': ['Please Select', 'Politics', 'Society', 'Diplomacy',
+                      'Military', 'Science', 'Odd', 'China Graphic'],
+            'SOURCE': ['Please Select', 'GT Voice', 'Insight', 'Economy', 'Comments',
+                       'Company', 'B&R Initiative', 'Biz Graphic']
+        }
+        self.input_record = {
+            'title_keyword': '',
+            'section': '',
+            'sub_section': '',
+            'author': '',
+            'source': '',
+            'text_keyword': '',
+            'start_date': '',
+            'end_date': '',
+            'order_by_time': True
+        }
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(446, 554)
+        MainWindow.resize(448, 561)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -26,73 +49,88 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName("lineEdit")
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.TitleContainsLine = QtWidgets.QLineEdit(self.centralwidget)
+        self.TitleContainsLine.setObjectName("TitleContainsLine")
+        self.horizontalLayout.addWidget(self.TitleContainsLine)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setObjectName("comboBox")
-        self.horizontalLayout_2.addWidget(self.comboBox)
-        self.comboBox_2 = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox_2.setObjectName("comboBox_2")
-        self.horizontalLayout_2.addWidget(self.comboBox_2)
+        self.FirstSectionCombobox = QtWidgets.QComboBox(self.centralwidget)
+        self.FirstSectionCombobox.setObjectName("FirstSectionCombobox")
+        self.FirstSectionCombobox.addItems(['Please Select', 'CHINA', 'SOURCE'])
+
+        self.horizontalLayout_2.addWidget(self.FirstSectionCombobox)
+        self.SecondSectionCombobox = QtWidgets.QComboBox(self.centralwidget)
+        self.SecondSectionCombobox.setObjectName("SecondSectionCombobox")
+
+        self.FirstSectionCombobox.currentIndexChanged.connect(self.update_combobox2)
+        self.horizontalLayout_2.addWidget(self.SecondSectionCombobox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_3.addWidget(self.label_3)
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.horizontalLayout_3.addWidget(self.lineEdit_2)
+        self.AuthorLine = QtWidgets.QLineEdit(self.centralwidget)
+        self.AuthorLine.setObjectName("AuthorLine")
+        self.horizontalLayout_3.addWidget(self.AuthorLine)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_4.addWidget(self.label_4)
-        self.lineEdit_3 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_3.setObjectName("lineEdit_3")
-        self.horizontalLayout_4.addWidget(self.lineEdit_3)
+        self.SourceLine = QtWidgets.QLineEdit(self.centralwidget)
+        self.SourceLine.setObjectName("SourceLine")
+        self.horizontalLayout_4.addWidget(self.SourceLine)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_5.addWidget(self.label_5)
-        self.lineEdit_4 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_4.setObjectName("lineEdit_4")
-        self.horizontalLayout_5.addWidget(self.lineEdit_4)
+        self.TextContainsLine = QtWidgets.QLineEdit(self.centralwidget)
+        self.TextContainsLine.setObjectName("TextContainsLine")
+        self.horizontalLayout_5.addWidget(self.TextContainsLine)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout_6.addWidget(self.label_6)
-        self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
-        self.dateEdit.setObjectName("dateEdit")
-        self.horizontalLayout_6.addWidget(self.dateEdit)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem)
+        self.DataStart = QtWidgets.QDateEdit(self.centralwidget)
+        self.DataStart.setObjectName("DataStart")
+        self.DataStart.setDate(QDate(2009, 1, 1))
+        self.DataStart.dateChanged.connect(self.update_date_end_min)
+        self.horizontalLayout_6.addWidget(self.DataStart)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem1)
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_6.addWidget(self.label_7)
-        self.dateEdit_2 = QtWidgets.QDateEdit(self.centralwidget)
-        self.dateEdit_2.setObjectName("dateEdit_2")
-        self.horizontalLayout_6.addWidget(self.dateEdit_2)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem2)
+        self.DateEnd = QtWidgets.QDateEdit(self.centralwidget)
+        self.DateEnd.setObjectName("DateEnd")
+        self.DateEnd.setDate(QDate.currentDate())
+        self.DateEnd.dateChanged.connect(self.update_date_start_max)
+        self.horizontalLayout_6.addWidget(self.DateEnd)
         self.verticalLayout.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setObjectName("label_8")
-        self.horizontalLayout_7.addWidget(self.label_8)
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox.setObjectName("checkBox")
         self.horizontalLayout_7.addWidget(self.checkBox)
         self.verticalLayout.addLayout(self.horizontalLayout_7)
+        self.ScrapingBegin = QtWidgets.QPushButton(self.centralwidget)
+        self.ScrapingBegin.setObjectName("ScrapingBegin")
+        self.ScrapingBegin.clicked.connect(self.export_data)
+        self.verticalLayout.addWidget(self.ScrapingBegin)
         self.horizontalLayout_8.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -112,8 +150,46 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Text contains"))
         self.label_6.setText(_translate("MainWindow", "Data range from"))
         self.label_7.setText(_translate("MainWindow", "to"))
-        self.label_8.setText(_translate("MainWindow", "Order By Time"))
-        self.checkBox.setText(_translate("MainWindow", "CheckBox"))
+        self.checkBox.setText(_translate("MainWindow", "Order By Name"))
+        self.ScrapingBegin.setText(_translate("MainWindow", "Begin"))
+
+    def export_data(self):
+        """Export the data from the input fields to the input_record dictionary."""
+        self.input_record['title_keyword'] = self.TitleContainsLine.text() or ''
+        self.input_record['section'] = self.FirstSectionCombobox.currentText() or ''
+        self.input_record['sub_section'] = self.SecondSectionCombobox.currentText() or ''
+        self.input_record['author'] = self.AuthorLine.text() or ''
+        self.input_record['source'] = self.SourceLine.text() or ''
+        self.input_record['text_keyword'] = self.TextContainsLine.text() or ''
+        self.input_record['start_date'] = self.DataStart.date().toString("yyyy-MM-dd")
+        self.input_record['end_date'] = self.DateEnd.date().toString("yyyy-MM-dd")
+        self.input_record['order_by_time'] = self.checkBox.isChecked()
+
+        print(self.input_record)
+
+        scraping = ScrapingTool(self.input_record)
+        scraping.setting_info()
+
+
+
+    def update_combobox2(self, index):
+        # obtain the first combobox info
+        selected_option = self.FirstSectionCombobox.currentText()
+
+        # clean second combobox info
+        self.SecondSectionCombobox.clear()
+
+        # update the second combobox info
+        if selected_option in self.section_options:
+            self.SecondSectionCombobox.addItems(self.section_options[selected_option])
+
+    def update_date_end_min(self, date):
+        """Update the minimum date of DateEnd when DataStart changes."""
+        self.DateEnd.setMinimumDate(date)
+
+    def update_date_start_max(self, date):
+        """Update the maximum date of DataStart when DateEnd changes."""
+        self.DataStart.setMaximumDate(date)
 
 
 if __name__ == "__main__":
