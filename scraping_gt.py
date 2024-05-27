@@ -95,7 +95,7 @@ class ScrapingTool:
                 self.browser.find_element(By.XPATH, "/html/body/div[4]/div[1]/div[12]/a[11]").click()
             else:
                 self.browser.find_element(By.XPATH, "/html/body/div[4]/div[1]/div[12]/a[10]").click()
-        print(self.news_links)
+        # print(self.news_links)
 
     def get_news_links(self):
         # Get element with class name = row-fluid

@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDate
+from PyQt5.QtWidgets import QFileDialog
 
 from scraping_gt import ScrapingTool
 
@@ -35,13 +36,15 @@ class Ui_MainWindow(object):
             'order_by_time': True
         }
 
+        self.output_folder = ""
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(448, 561)
+        MainWindow.resize(439, 510)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.verticalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -127,11 +130,35 @@ class Ui_MainWindow(object):
         self.checkBox.setObjectName("checkBox")
         self.horizontalLayout_7.addWidget(self.checkBox)
         self.verticalLayout.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.output_dir_text = QtWidgets.QLineEdit(self.centralwidget)
+        self.output_dir_text.setObjectName("output_dir_text")
+        self.horizontalLayout_9.addWidget(self.output_dir_text)
+        self.browser_output_folder = QtWidgets.QPushButton(self.centralwidget)
+        self.browser_output_folder.setObjectName("browser_output_folder")
+        self.browser_output_folder.clicked.connect(self.browse_output_folder)
+        self.horizontalLayout_9.addWidget(self.browser_output_folder)
+        self.verticalLayout.addLayout(self.horizontalLayout_9)
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_8.addWidget(self.label_8)
+        self.DownloadNumber = QtWidgets.QLineEdit(self.centralwidget)
+        self.DownloadNumber.setObjectName("DownloadNumber")
+        self.horizontalLayout_8.addWidget(self.DownloadNumber)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem3)
+        self.horizontalLayout_8.setStretch(0, 1)
+        self.horizontalLayout_8.setStretch(1, 2)
+        self.horizontalLayout_8.setStretch(2, 7)
+        self.verticalLayout.addLayout(self.horizontalLayout_8)
         self.ScrapingBegin = QtWidgets.QPushButton(self.centralwidget)
         self.ScrapingBegin.setObjectName("ScrapingBegin")
         self.ScrapingBegin.clicked.connect(self.export_data)
         self.verticalLayout.addWidget(self.ScrapingBegin)
-        self.horizontalLayout_8.addLayout(self.verticalLayout)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -150,7 +177,10 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Text contains"))
         self.label_6.setText(_translate("MainWindow", "Data range from"))
         self.label_7.setText(_translate("MainWindow", "to"))
-        self.checkBox.setText(_translate("MainWindow", "Order By Name"))
+        self.checkBox.setText(_translate("MainWindow", "Order By Date"))
+        self.output_dir_text.setText(_translate("MainWindow", "Output folder path"))
+        self.browser_output_folder.setText(_translate("MainWindow", "Browser"))
+        self.label_8.setText(_translate("MainWindow", "Download Num"))
         self.ScrapingBegin.setText(_translate("MainWindow", "Begin"))
 
     def export_data(self):
@@ -189,6 +219,14 @@ class Ui_MainWindow(object):
     def update_date_start_max(self, date):
         """Update the maximum date of DataStart when DateEnd changes."""
         self.DataStart.setMaximumDate(date)
+
+    def browse_output_folder(self):
+        # Open a file dialog and get the selected directory
+        self.output_folder = QFileDialog.getExistingDirectory(None, "Select Output Folder")
+
+
+        # Set the selected directory as the text of the output_dir_text text box
+        self.output_dir_text.setText(self.output_folder)
 
 
 if __name__ == "__main__":
